@@ -1,3 +1,5 @@
+local healthEnabled = false
+
 --// Made by Ghost-Ducky#7698
 while true do if game:IsLoaded() and game.PlaceId == 10875701453 then break; end task.wait(.1); end
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Valiant/source.lua"))()
@@ -90,6 +92,24 @@ end)
 visual:CreateLabel("Entity")
 visual:CreateToggle("Charm", "Add highlight to entity", function(x)
     Setting.esp.EntityCharm = x
+end)
+
+visual:CreateLabel("Health")
+visual:CreateToggle("Inf health", "modify health", function(state)
+local re = game:GetService("ReplicatedStorage").Medical_ReplicatedStorage.RemoteEvent_RequestHealth
+healthEnabled = state -- Update the flag based on the toggle state
+
+if healthEnabled then
+    -- If toggle is on, check and destroy the ground if it exists
+    if game:GetService("Workspace").ScrollingTerrainBounds:FindFirstChild("Ground") then
+        game:GetService("Workspace").ScrollingTerrainBounds.Ground:Destroy()
+    end
+
+    -- Start the health modification loop
+    while healthEnabled and task.wait(0.1) do
+        re:FireServer(25)
+    end
+end
 end)
 
 --// Function
