@@ -26,6 +26,14 @@ getgenv().Setting = {
 
 --// Source
 local main = section:CreateFrame("Main")
+main:CreateLabel("Main")
+main:CreateToggle("Auto survival", "Farm ticket", function(x)
+    Setting.AutoFarm = x
+    if x then
+        Farm()
+    end
+end)
+
 main:CreateLabel("Modify")
 main:CreateButton("Fast Recovry Stamina", "Modify self stamina", function()
     local function modify()
