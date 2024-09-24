@@ -122,22 +122,43 @@ end)
 
 --// Function
 function Farm()
+    local LocalPlayer = game.Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
     task.spawn(function()
         while Setting.AutoFarm do
-            if Character == nil then LocalPlayer.CharacterAppearanceLoaded:Wait() end
-            if not workspace:FindFirstChild("PlatForm") then local plat = Instance.new("Part", workspace); plat.Name = "PlatForm"; plat.Anchored = true; plat.CFrame = CFrame.new(math.random(1000,5000),math.random(1000,2500),math.random(1000,5000)); plat.Size = Vector3.new(100, 1, 100); task.wait(.5) end
-            if LocalPlayer.Team == game:GetService("Teams").Train then
+            -- Wait for character to load
+            if Character == nil then 
+                LocalPlayer.CharacterAppearanceLoaded:Wait() 
+                Character = LocalPlayer.Character  -- Update character reference
+            end
+
+            -- Ensure platform exists
+            if not workspace:FindFirstChild("PlatForm") then
+                local plat = Instance.new("Part", workspace)
+                plat.Name = "PlatForm"
+                plat.Anchored = true
+                plat.CFrame = CFrame.new(math.random(1000,5000), math.random(1000,2500), math.random(1000,5000))
+                plat.Size = Vector3.new(100, 1, 100)
+                task.wait(0.5)
+            end
+
+            -- Handle teams and movement
+            if LocalPlayer.Team == game:GetService("Teams"):FindFirstChild("Train") then
                 if not Character.HumanoidRootPart.Anchored then
-                    Character.HumanoidRootPart.CFrame = workspace.PlatForm.CFrame * CFrame.new(0,4,0)
-                    task.wait(.2)
+                    Character.HumanoidRootPart.CFrame = workspace.PlatForm.CFrame * CFrame.new(0, 4, 0)
+                    task.wait(0.2)
                     Character.HumanoidRootPart.Anchored = true
                 end
+            elseif LocalPlayer.Team == game:GetService("Teams"):FindFirstChild("Station") then
+                Character.HumanoidRootPart.Anchored = false
             end
-            if LocalPlayer.Team == game:GetService("Teams").Station then Character.HumanoidRootPart.Anchored = false end
-            task.wait(.1)
+
+            task.wait(0.1)
         end
     end)
 end
+
 
 function RemoveNametag()
     local function remove(v)
